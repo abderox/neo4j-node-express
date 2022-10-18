@@ -1,0 +1,26 @@
+{
+  "name": "neo4j",
+  "version": "1.0.0",
+  "description": "Big data Neo4j",
+  "author": {
+    "name": "abderox",
+    "email": "abdelhadi12mouzafir@gmail.com"},
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon --exec babel-node app.js"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.19.3",
+    "@babel/node": "^7.19.1",
+    "@babel/preset-env": "^7.19.4"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "nanoid": "^4.0.0",
+    "neo4j-driver": "^4.3.0"
+  }
+}
