@@ -44,6 +44,12 @@ post.get('/tags/:tag', async(req, res) => {
     res.json(result)
 })
 
+
+post.get('/download/:name', async (req, res) => {
+    await postModel.downloadfile(req, res);
+})
+
+
 post.put('/views/:id', async (req, res) => {
     const result = await postModel.findByIdAndUpdatePostViews(req.params.id, req.body)
     res.json(result)

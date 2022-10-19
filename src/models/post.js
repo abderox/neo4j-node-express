@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid';
-
+import fs from 'fs-extra';
+import path from 'path';
 import session from '../db/neo4j.js'
 
 const findAllPosts = async () => {
@@ -41,14 +42,14 @@ const createPost = async (post) => {
     , date : '${post.date}' , likes : '${post.likes}' , dislikes : '${post.dislikes}' , comments : '${post.comments}' , shares : '${post.shares}' , views : '${post.views}'*/
 
     const unique_id = nanoid(8)
-    
+
     const defaultPost = {
         _id: unique_id,
         views: parseInt(0),
         likes: parseInt(0),
         dislikes: parseInt(0),
     }
-    const obj = {...defaultPost, ...post }
+    const obj = { ...defaultPost, ...post }
 
     // const arr = JSON.stringify(post).replace(/"/g, "'").replace(/{/g, '').replace(/}/g, '').split(',')
 
@@ -126,6 +127,29 @@ const findAllByTag = async (tag) => {
 }
 
 
+const downloadfile = async (req, res) => {
+
+    const { name } = req.params
+    // const result = await session.run(`MATCH (p:Post {_id : '${id}'}) return p limit 1`)
+    // const post = result.records[0].get('p').properties
+
+    if (name) {
+        const filePath = path.join(process.cwd(), 'src', 'media', `${name}`)
+
+        console.log(filePath)
+        fs.readFile(filePath, (err, data) => {
+            if (err) {
+                res.status(500).send({ message: 'Error retrieving file' })
+            } else {
+                res.status(200).send(data)
+            }
+        })
+    }
+    else {
+        res.status(200).send({ message: 'No file was found !' })
+    }
+
+}
 
 
 
@@ -141,5 +165,6 @@ export default {
     findAllByTag,
     findByIdAndUpdatePostViews,
     findByIdAndUpdatePostLikes,
-    findByIdAndUpdatePostDislikes
+    findByIdAndUpdatePostDislikes,
+    downloadfile
 }
