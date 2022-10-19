@@ -91,6 +91,25 @@ const findAllByUserIdAndComments = async (userId) => {
     return results
 }
 
+
+const findAllTags = async () => {
+    const result = await findAllPosts();
+    let tags = []
+    result.forEach(i => {
+        if (i.tags) {
+            tags = [...tags, ...i.tags]
+        }
+    })
+    return tags
+}
+
+const findAllByTag = async (tag) => {
+    const result = await session.run(`MATCH (p:Post) WHERE '${tag}' IN p.tags return p`)
+    return result.records.map(i => i.get('p').properties)
+}
+
+
+
 export default {
     findAllPosts,
     findByIdPost,
@@ -99,5 +118,6 @@ export default {
     findByIdAndDeletePost,
     findAllByUserId,
     findAllByUserIdAndComments,
-    findAllandComments
+    findAllandComments,
+    findAllTags,
 }

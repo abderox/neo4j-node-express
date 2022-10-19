@@ -34,6 +34,11 @@ post.post('/', async (req, res) => {
 
 })
 
+post.get('/tags/all', async(req, res) => {
+    const result = await postModel.findAllTags()
+    res.json(result)
+})
+
 post.put('/:id', async (req, res) => {
     const result = await postModel.findByIdAndUpdatePost(req.params.id, req.body)
     res.json(result)
