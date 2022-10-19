@@ -6,7 +6,7 @@ import commentModel from "../models/comment.js";
 const post = Router();
 
 post.get('/', async (req, res) => {
-   const result =  await postModel.findAllandComments();
+    const result = await postModel.findAllandComments();
     res.send(result)
 })
 
@@ -34,12 +34,12 @@ post.post('/', async (req, res) => {
 
 })
 
-post.get('/tags/all', async(req, res) => {
+post.get('/tags/all', async (req, res) => {
     const result = await postModel.findAllTags()
     res.json(result)
 })
 
-post.get('/tags/:tag', async(req, res) => {
+post.get('/tags/:tag', async (req, res) => {
     const result = await postModel.findAllByTag(req.params.tag)
     res.json(result)
 })
@@ -48,6 +48,8 @@ post.get('/tags/:tag', async(req, res) => {
 post.get('/download/:name', async (req, res) => {
     await postModel.downloadfile(req, res);
 })
+
+
 
 
 post.put('/views/:id', async (req, res) => {

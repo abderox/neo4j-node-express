@@ -112,13 +112,14 @@ const findAllByUserIdAndComments = async (userId) => {
 
 const findAllTags = async () => {
     const result = await findAllPosts();
-    let tags = []
+    let tags = new Set()
     result.forEach(i => {
         if (i.tags) {
-            tags = [...tags, ...i.tags]
+            tags = new Set([...tags, ...i.tags])
         }
     })
-    return tags
+    console.log(tags)
+    return Array.from(tags)
 }
 
 const findAllByTag = async (tag) => {
@@ -151,6 +152,32 @@ const downloadfile = async (req, res) => {
 
 }
 
+const uploadfile = async (req, res) => {
+
+    const { id } = req.params
+   
+    if (req.files) {
+        const file = req.files.file
+        const fileName = file.name
+        const filePath = path.join(process.cwd(), 'src', 'media', `${fileName}`)
+        file.mv(filePath, async (err) => {
+            if (err) {
+                res.status(500).send({ message: 'Error uploading file' })
+            } else {
+                await session.run(`MATCH (p:Post {_id : '${id}'}) SET p.document = '${fileName}' return p`)
+                res.status(200).send({ message: 'File uploaded successfully' })
+            }
+
+        })
+    }
+    else {
+        res.status(200).send({ message: 'No file was found !' })
+    }
+
+}
+
+
+
 
 
 export default {
@@ -166,5 +193,6 @@ export default {
     findByIdAndUpdatePostViews,
     findByIdAndUpdatePostLikes,
     findByIdAndUpdatePostDislikes,
-    downloadfile
+    downloadfile,
+    uploadfile
 }
