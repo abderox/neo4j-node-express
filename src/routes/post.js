@@ -6,10 +6,8 @@ import commentModel from "../models/comment.js";
 const post = Router();
 
 post.get('/', async (req, res) => {
-    await postModel.findAll().then(async (posts) => {
-        const relationships = await relationships.findAllRelationships()
-        res.json({ posts, relationships })
-    })
+   const result =  await postModel.findAllandComments();
+    res.send(result)
 })
 
 

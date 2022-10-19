@@ -7,6 +7,26 @@ const findAllPosts = async () => {
     return result.records.map(i => i.get('p').properties)
 }
 
+const findAllandComments = async () => {
+
+    const results = []
+    let set = new Set()
+
+    const result = await session.run(`Match (p:Post)-[r:HAS_COMMENT]->(c:Comment) return p,c`)
+    result.records.forEach(i => {
+        const post = i.get('p').properties
+        const comment = i.get('c').properties
+        if (!set.has(post._id)) {
+            set.add(post._id)
+            post.comments = [comment]
+            results.push(post)
+        } else {
+            results.find(i => i._id === post._id).comments.push(comment)
+        }
+    })
+    return results;
+}
+
 const findByIdPost = async (id) => {
     const result = await session.run(`MATCH (p:Post {_id : '${id}'} ) return p limit 1`)
     return result.records[0].get('p').properties
@@ -15,14 +35,14 @@ const findByIdPost = async (id) => {
 const createPost = async (post) => {
 
     // console.log(post.replace(/"/g, "'").replace(/{/g, '').replace(/}/g, ''))
-    
+
     /*name : '${post.name}' ,title: '${post.title}', body: '${post.body}', author: '${post.author}' , category : '${post.category}'
     , document : '${post.document}' , image : '${post.image}' 
     , date : '${post.date}' , likes : '${post.likes}' , dislikes : '${post.dislikes}' , comments : '${post.comments}' , shares : '${post.shares}' , views : '${post.views}'*/
-    
+
     const unique_id = nanoid(8)
-    const obj = {_id:unique_id, ...post}
-    
+    const obj = { _id: unique_id, ...post }
+
     // const arr = JSON.stringify(post).replace(/"/g, "'").replace(/{/g, '').replace(/}/g, '').split(',')
 
     // var str = arr.reduce((acc,curr)=>acc+','+curr.split(':')[0].replace(/'/g, "")+' : '+curr.split(':')[1])
@@ -31,7 +51,7 @@ const createPost = async (post) => {
 
     // ! finally it worked
 
-    await session.run(`CREATE (p:Post $post ) return p`,{post : obj})
+    await session.run(`CREATE (p:Post $post ) return p`, { post: obj })
     return await findByIdPost(unique_id)
 }
 
@@ -53,17 +73,17 @@ const findAllByUserId = async (userId) => {
 
 const findAllByUserIdAndComments = async (userId) => {
 
-    let results= []
+    let results = []
     let set = new Set()
     const result = await session.run(`MATCH (u:User {_id : '${userId}'})-[r:AUTHOR_OF]->(p:Post)-[r2:HAS_COMMENT]->(c:Comment) return p,c`)
     result.records.forEach(i => {
         const post = i.get('p').properties
         const comment = i.get('c').properties
-        if(!set.has(post._id)){
+        if (!set.has(post._id)) {
             set.add(post._id)
             post.comments = [comment]
             results.push(post)
-        }else{
+        } else {
             results.find(i => i._id === post._id).comments.push(comment)
         }
     })
@@ -78,5 +98,6 @@ export default {
     findByIdAndUpdatePost,
     findByIdAndDeletePost,
     findAllByUserId,
-    findAllByUserIdAndComments
+    findAllByUserIdAndComments,
+    findAllandComments
 }
