@@ -11,11 +11,11 @@ const findById = async (id) => {
     const result = await session.run(`MATCH (u:User {_id : '${id}'} ) return u limit 1`)
     return result.records[0].get('u').properties
 }
-const create = async (user) => {
-    const unique_id = nanoid(8)
-    await session.run(`CREATE (u:User {_id : '${unique_id}', name: '${user.name}', email: '${user.email}', password: '${user.password}' , 
+const create = async (user,id__) => {
+    // const unique_id = nanoid(8)
+    await session.run(`CREATE (u:User {_id : '${id__}', name: '${user.username}', email: '${user.email}', password: '${user.password}' , nom : '${user.nom}', prenom : '${user.prenom}',
     nationality :  '${user.nationality}' , school_level : '${user.school_level}' , domain : '${user.domain}' } ) return u`)
-    return await findById(unique_id)
+    return await findById(id__)
 }
 
 const findByIdAndUpdate = async (id, user) => {

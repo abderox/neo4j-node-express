@@ -1,5 +1,6 @@
 import { Router } from "express";
 import userModel from '../models/user.js'
+import {signup} from '../controllers/auth.controller.js'
 const user = Router()
 
 
@@ -12,8 +13,11 @@ user.get('/:id', async (req,res)=>{
     res.json(result)
 })
 user.post('/', async (req,res)=>{
-    const result = await userModel.create(req.body)
-    res.json(result)
+     await signup(req,res).then(async (user_)=>{
+        console.log(user_._id)
+        const result = await userModel.create(req.body,user_._id)
+        res.json(result)
+     })
 })
 user.put('/:id', async (req,res)=>{
     const result = await userModel.findByIdAndUpdate(req.params.id, req.body)

@@ -4,6 +4,8 @@ import post from './src/routes/post.js'
 import comment from './src/routes/comment.js'
 import cors from "cors";
 import cookieSession from "cookie-session";
+import connectDB from "./src/db/mongodb.js";
+import userLogin from './src/routes/userLogin.js'
 
 var corsOptions = {
     origin: "*",
@@ -33,11 +35,20 @@ app.use(
       httpOnly: true,
     })
   );
+
+  connectDB().then(() => {
+    console.log("Connected to database ");
+  })
+  .catch((err) => {
+    console.error(`Error connecting to the database. \n${err}`);
+  });
   
 
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+
+app.use("/api/auth", userLogin);
 app.use('/user', user)
 app.use('/post', post)
 app.use('/comment', comment)
