@@ -41,7 +41,14 @@ const createPost = async (post) => {
     , date : '${post.date}' , likes : '${post.likes}' , dislikes : '${post.dislikes}' , comments : '${post.comments}' , shares : '${post.shares}' , views : '${post.views}'*/
 
     const unique_id = nanoid(8)
-    const obj = { _id: unique_id, ...post }
+    
+    const defaultPost = {
+        _id: unique_id,
+        views: parseInt(0),
+        likes: parseInt(0),
+        dislikes: parseInt(0),
+    }
+    const obj = {...defaultPost, ...post }
 
     // const arr = JSON.stringify(post).replace(/"/g, "'").replace(/{/g, '').replace(/}/g, '').split(',')
 
@@ -55,8 +62,18 @@ const createPost = async (post) => {
     return await findByIdPost(unique_id)
 }
 
-const findByIdAndUpdatePost = async (id, post) => {
-    const result = await session.run(`MATCH (p:Post {_id : '${id}'}) SET p.title= '${post.title}', p.body= '${post.body}', p.author= '${post.author}' return p`)
+const findByIdAndUpdatePostViews = async (id, post) => {
+    const result = await session.run(`MATCH (p:Post {_id : '${id}'}) SET p.views= '${parseInt(post.views)}' return p`)
+    return result.records[0].get('p').properties
+}
+
+const findByIdAndUpdatePostLikes = async (id, post) => {
+    const result = await session.run(`MATCH (p:Post {_id : '${id}'}) SET p.likes= '${post.likes}' return p`)
+    return result.records[0].get('p').properties
+}
+
+const findByIdAndUpdatePostDislikes = async (id, post) => {
+    const result = await session.run(`MATCH (p:Post {_id : '${id}'}) SET p.dislikes= '${post.dislikes}' return p`)
     return result.records[0].get('p').properties
 }
 
@@ -110,14 +127,19 @@ const findAllByTag = async (tag) => {
 
 
 
+
+
 export default {
     findAllPosts,
     findByIdPost,
     createPost,
-    findByIdAndUpdatePost,
     findByIdAndDeletePost,
     findAllByUserId,
     findAllByUserIdAndComments,
     findAllandComments,
     findAllTags,
+    findAllByTag,
+    findByIdAndUpdatePostViews,
+    findByIdAndUpdatePostLikes,
+    findByIdAndUpdatePostDislikes
 }

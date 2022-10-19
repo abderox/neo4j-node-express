@@ -39,10 +39,29 @@ post.get('/tags/all', async(req, res) => {
     res.json(result)
 })
 
-post.put('/:id', async (req, res) => {
-    const result = await postModel.findByIdAndUpdatePost(req.params.id, req.body)
+post.get('/tags/:tag', async(req, res) => {
+    const result = await postModel.findAllByTag(req.params.tag)
     res.json(result)
 })
+
+post.put('/views/:id', async (req, res) => {
+    const result = await postModel.findByIdAndUpdatePostViews(req.params.id, req.body)
+    res.json(result)
+})
+
+
+post.put('/likes/:id', async (req, res) => {
+    const result = await postModel.findByIdAndUpdatePostLikes(req.params.id, req.body)
+    res.json(result)
+})
+
+
+post.put('/dislikes/:id', async (req, res) => {
+    const result = await postModel.findByIdAndUpdatePostDislikes(req.params.id, req.body)
+    res.json(result)
+})
+
+
 
 post.delete('/:id', async (req, res) => {
     const result = await postModel.findByIdAndDeletePost(req.params.id);
