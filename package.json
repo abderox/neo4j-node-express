@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "Big data Neo4j",
   "author": {
-    "name": "abderox",
-    "email": "abdelhadi12mouzafir@gmail.com"
+    "name": "abderox & kaoutar_ou"
   },
   "main": "index.js",
   "type": "module",
