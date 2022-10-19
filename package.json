@@ -4,7 +4,8 @@
   "description": "Big data Neo4j",
   "author": {
     "name": "abderox",
-    "email": "abdelhadi12mouzafir@gmail.com"},
+    "email": "abdelhadi12mouzafir@gmail.com"
+  },
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -18,6 +19,7 @@
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
+    "cookie-session": "^2.0.0",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "nanoid": "^4.0.0",

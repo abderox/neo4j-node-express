@@ -42,6 +42,14 @@ const deleteRelationshipsByUserIdAndPostId = async (user_id, post_id) => {
     return await findAllRelationships()
 }
 
+
+const createRelationShipCommentUser= async (_id,body) => {
+    console.log(body)
+    await session.run(`MATCH (u:User {_id : '${body.userId}'}), (c:Comment {_id : '${_id}'}) CREATE (u)-[r:COMMENTED]->(c) return r`)
+    await session.run(`MATCH (p:Post {_id : '${body.postId}'}), (c:Comment {_id : '${_id}'}) CREATE (p)-[r:HAS_COMMENT]->(c) return r`)
+}
+
+
 export default {
     createRelationShip,
     findAllRelationships,
@@ -50,5 +58,6 @@ export default {
     findRelationshipsByUserIdAndPostId,
     deleteRelationshipsByUserId,
     deleteRelationshipsByPostId,
-    deleteRelationshipsByUserIdAndPostId
+    deleteRelationshipsByUserIdAndPostId,
+    createRelationShipCommentUser
 }

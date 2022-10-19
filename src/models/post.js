@@ -45,10 +45,38 @@ const findByIdAndDeletePost = async (id) => {
     return await findAllPosts()
 }
 
+const findAllByUserId = async (userId) => {
+    const result = await session.run(`MATCH (u:User {_id : '${userId}'})-[r:AUTHOR_OF]->(p:Post) return p`)
+    console.log(result.records)
+    return result.records.map(i => i.get('p').properties)
+}
+
+const findAllByUserIdAndComments = async (userId) => {
+
+    let results= []
+    let set = new Set()
+    const result = await session.run(`MATCH (u:User {_id : '${userId}'})-[r:AUTHOR_OF]->(p:Post)-[r2:HAS_COMMENT]->(c:Comment) return p,c`)
+    result.records.forEach(i => {
+        const post = i.get('p').properties
+        const comment = i.get('c').properties
+        if(!set.has(post._id)){
+            set.add(post._id)
+            post.comments = [comment]
+            results.push(post)
+        }else{
+            results.find(i => i._id === post._id).comments.push(comment)
+        }
+    })
+    console.log(results)
+    return results
+}
+
 export default {
     findAllPosts,
     findByIdPost,
     createPost,
     findByIdAndUpdatePost,
-    findByIdAndDeletePost
+    findByIdAndDeletePost,
+    findAllByUserId,
+    findAllByUserIdAndComments
 }
