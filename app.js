@@ -3,6 +3,7 @@ import user from './src/routes/user.js'
 import post from './src/routes/post.js'
 import comment from './src/routes/comment.js'
 import cors from "cors";
+import fileUpload from 'express-fileupload';
 import cookieSession from "cookie-session";
 import connectDB from "./src/db/mongodb.js";
 import userLogin from './src/routes/userLogin.js'
@@ -14,12 +15,13 @@ var corsOptions = {
 const app = express()
 
 app.use(cors(corsOptions));
+app.use(fileUpload());
 
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header(
         "Access-Control-Allow-Header",
-        "Origin; X-Requested-With, Content-Type, Accept, Authorization,x-access-token"
+        "Origin; X-Requested-With, Content-Type, Accept, Authorization,x-access-token , multipart/form-data"
     );
     if (res.method === "OPTIONS") {
         res.header("Access-Control-Allow-Methods", "PUT, POST,PATCH, DELE, GET");

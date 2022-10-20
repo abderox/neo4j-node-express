@@ -50,6 +50,10 @@ post.get('/download/:name', async (req, res) => {
 })
 
 
+post.post('/upload', 
+     postModel.uploadfile
+)
+
 
 
 post.put('/views/:id', async (req, res) => {

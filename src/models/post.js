@@ -1,6 +1,8 @@
 import { nanoid } from 'nanoid';
 import fs from 'fs-extra';
 import path from 'path';
+
+
 import session from '../db/neo4j.js'
 
 const findAllPosts = async () => {
@@ -35,12 +37,6 @@ const findByIdPost = async (id) => {
 
 const createPost = async (post) => {
 
-    // console.log(post.replace(/"/g, "'").replace(/{/g, '').replace(/}/g, ''))
-
-    /*name : '${post.name}' ,title: '${post.title}', body: '${post.body}', author: '${post.author}' , category : '${post.category}'
-    , document : '${post.document}' , image : '${post.image}' 
-    , date : '${post.date}' , likes : '${post.likes}' , dislikes : '${post.dislikes}' , comments : '${post.comments}' , shares : '${post.shares}' , views : '${post.views}'*/
-
     const unique_id = nanoid(8)
 
     const defaultPost = {
@@ -50,12 +46,6 @@ const createPost = async (post) => {
         dislikes: parseInt(0),
     }
     const obj = { ...defaultPost, ...post }
-
-    // const arr = JSON.stringify(post).replace(/"/g, "'").replace(/{/g, '').replace(/}/g, '').split(',')
-
-    // var str = arr.reduce((acc,curr)=>acc+','+curr.split(':')[0].replace(/'/g, "")+' : '+curr.split(':')[1])
-    // str = str.concat(` , _id : '${unique_id}'`)
-    // console.log(str)
 
     // ! finally it worked
 
@@ -153,26 +143,32 @@ const downloadfile = async (req, res) => {
 }
 
 const uploadfile = async (req, res) => {
+    console.log(req.files.file)
 
-    const { id } = req.params
-   
-    if (req.files) {
-        const file = req.files.file
-        const fileName = file.name
-        const filePath = path.join(process.cwd(), 'src', 'media', `${fileName}`)
-        file.mv(filePath, async (err) => {
-            if (err) {
-                res.status(500).send({ message: 'Error uploading file' })
-            } else {
-                await session.run(`MATCH (p:Post {_id : '${id}'}) SET p.document = '${fileName}' return p`)
-                res.status(200).send({ message: 'File uploaded successfully' })
-            }
+    const maxSize = 8 * 1024 * 1024;
 
-        })
+    if (!req.files.file) {
+        return res.status(400).send('No files were uploaded.');
     }
-    else {
-        res.status(200).send({ message: 'No file was found !' })
+
+
+    if (req.files.file > maxSize) {
+        return res.status(400).send('File too large');
     }
+
+    const unique_id = nanoid(8)
+    console.log(unique_id)
+    const filePath = path.join(process.cwd(), 'src', 'media', `${unique_id}.${req.files.file.name.split('.').pop()}`)
+    console.log(filePath)
+
+    req.files.file.mv(filePath, function (err) {
+        if (err) {
+            return res.status(500).send(err);
+        }
+
+        res.send('File uploaded!');
+    });
+
 
 }
 
