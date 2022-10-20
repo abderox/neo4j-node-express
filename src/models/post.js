@@ -145,6 +145,8 @@ const downloadfile = async (req, res) => {
 const uploadfile = async (req, res) => {
     console.log(req.files.file)
 
+    const {name} = req.params
+
     const maxSize = 8 * 1024 * 1024;
 
     if (!req.files.file) {
@@ -158,7 +160,7 @@ const uploadfile = async (req, res) => {
 
     const unique_id = nanoid(8)
     console.log(unique_id)
-    const filePath = path.join(process.cwd(), 'src', 'media', `${unique_id}.${req.files.file.name.split('.').pop()}`)
+    const filePath = path.join(process.cwd(), 'src', 'media', `${name}.${req.files.file.name.split('.').pop()}`)
     console.log(filePath)
 
     req.files.file.mv(filePath, function (err) {
