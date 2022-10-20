@@ -18,15 +18,33 @@ const findAllandComments = async () => {
     const result = await session.run(`Match (p:Post)-[r:HAS_COMMENT]->(c:Comment) return p,c`)
     result.records.forEach(i => {
         const post = i.get('p').properties
-        const comment = i.get('c').properties
+        const comment = i.get('c').properties || {}
+
         if (!set.has(post._id)) {
             set.add(post._id)
-            post.comments = [comment]
+            if (comment!=={}) {
+                post.comments = []
+            } else {
+                post.comments = [comment]
+            }
             results.push(post)
         } else {
             results.find(i => i._id === post._id).comments.push(comment)
         }
+
     })
+
+    const resultwithoutcomments = await session.run(`Match (p:Post) where not (p)-[:HAS_COMMENT]->() return p`)
+    resultwithoutcomments.records.forEach(i => {
+        const post = i.get('p').properties
+        if (!set.has(post._id)) {
+            set.add(post._id)
+            post.comments = []
+            results.push(post)
+        }
+    })
+
+    
     return results;
 }
 
@@ -143,9 +161,9 @@ const downloadfile = async (req, res) => {
 }
 
 const uploadfile = async (req, res) => {
-    console.log(req.files.file)
 
-    const {name} = req.params
+
+    const { name } = req.params
 
     const maxSize = 8 * 1024 * 1024;
 
@@ -158,10 +176,9 @@ const uploadfile = async (req, res) => {
         return res.status(400).send('File too large');
     }
 
-    const unique_id = nanoid(8)
-    console.log(unique_id)
+
     const filePath = path.join(process.cwd(), 'src', 'media', `${name}.${req.files.file.name.split('.').pop()}`)
-    console.log(filePath)
+
 
     req.files.file.mv(filePath, function (err) {
         if (err) {
