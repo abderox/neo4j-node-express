@@ -44,7 +44,7 @@ const findAllandComments = async () => {
         }
     })
 
-    
+
     return results;
 }
 
@@ -99,6 +99,15 @@ const findAllByUserId = async (userId) => {
 
 const findAllByUserIdAndComments = async (userId) => {
 
+    const map = new Map()
+    map.set('posts', 'hello')
+    map.set('comments', 'hello')
+
+    map.forEach((value, key) => {
+        console.log(key, value)
+    })
+
+
     let results = []
     let set = new Set()
     const result = await session.run(`MATCH (u:User {_id : '${userId}'})-[r:AUTHOR_OF]->(p:Post)-[r2:HAS_COMMENT]->(c:Comment) return p,c`)
@@ -134,6 +143,55 @@ const findAllByTag = async (tag) => {
     const result = await session.run(`MATCH (p:Post) WHERE '${tag}' IN p.tags return p`)
     return result.records.map(i => i.get('p').properties)
 }
+
+const findAllDocumentsInPosts = async () => {
+    const result = await findAllPosts();
+    let documents = []
+    result.forEach(i => {
+        if (i.document) {
+            documents.push(JSON.parse(i.document))
+        }
+    })
+
+    return documents;
+}
+
+const findAllDocumentsByAnyProperty = async (value) => {
+    
+    const documents = await findAllDocumentsInPosts();
+
+    let documentsNames = new Set();
+
+    return documents.filter(i => {
+        if(!documentsNames.has(i.name)){
+            documentsNames.add(i.name)
+            return Object.values(i).some(j => j.includes(value))
+        }
+    })
+
+
+    // return documents.filter(i => {
+    //     for (let key in i) {
+    //         if (i[key] === value) {
+    //             filtered_documents.add(i)
+    //         }
+    //     }
+    // })
+
+
+    // return documents.reduce((acc, curr) => {
+    //    Object.values(curr).forEach(i => {
+    //           if (i === value) {
+    //                 acc.push(curr)
+    //             }
+    //         })
+    //     return acc
+    // }, [])
+
+}
+
+
+
 
 
 const downloadfile = async (req, res) => {
@@ -192,9 +250,6 @@ const uploadfile = async (req, res) => {
 }
 
 
-
-
-
 export default {
     findAllPosts,
     findByIdPost,
@@ -209,5 +264,7 @@ export default {
     findByIdAndUpdatePostLikes,
     findByIdAndUpdatePostDislikes,
     downloadfile,
-    uploadfile
+    uploadfile,
+    findAllDocumentsInPosts,
+    findAllDocumentsByAnyProperty,
 }

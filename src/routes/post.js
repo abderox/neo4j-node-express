@@ -50,8 +50,8 @@ post.get('/download/:name', async (req, res) => {
 })
 
 
-post.post('/upload/:name', 
-     postModel.uploadfile
+post.post('/upload/:name',
+    postModel.uploadfile
 )
 
 
@@ -77,6 +77,19 @@ post.put('/dislikes/:id', async (req, res) => {
 
 post.delete('/:id', async (req, res) => {
     const result = await postModel.findByIdAndDeletePost(req.params.id);
+    res.json(result)
+})
+
+
+// ! new requests 
+
+post.get('/get-documents', async (req, res) => {
+    const result = await postModel.findAllDocumentsInPosts();
+    res.json(result)
+})
+
+post.get('/get-documents/:value', async (req, res) => {
+    const result = await postModel.findAllDocumentsByAnyProperty(req.params.value);
     res.json(result)
 })
 
