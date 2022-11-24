@@ -1,5 +1,6 @@
 import { Router } from "express";
 const commentRouter = Router();
+import * as commentController from '../controllers/comment.controller.js'
 
 
 commentRouter.get('/', async (req, res) => {
@@ -13,6 +14,7 @@ commentRouter.get('/:id', async (req, res) => {
 })
 
 commentRouter.post('/', async (req, res) => {
+    await commentController.addComment(req, res);
     // await comment.createComment(req.body).then(async (result) => {
     //     console.log(result._id)
     //     await relationships.createRelationShipCommentUser(result._id, req.body)

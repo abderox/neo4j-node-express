@@ -1,17 +1,20 @@
 import { Router } from "express";
 import uploadController from '../controllers/upload.controller.js'
 import * as postModel from "../models/post.js";
+import * as postController from "../controllers/post.controller.js";
 
 const post = Router();
 
 post.get('/', async (req, res) => {
-    await postModel.getPosts(req, res);
+    await postController.getPosts(req, res);
     // const result = await postModel.findAllandComments();
     // res.send(result)
 })
 
 
 post.get('/:id', async (req, res) => {
+    console.log(req.params.id)
+    await postController.getPostById(req, res);
     // await postModel.findByIdPost(req.params.id).then(async (post) => {
     //     const comments = await commentModel.findAllByPostId(post._id)
     //     res.json({ post, comments })
@@ -30,7 +33,7 @@ post.post('/test', async (req, res) => {
 })
 
 post.post('/', async (req, res) => {
-    await postModel.addPost(req, res);
+    await postController.addPost(req, res);
     // await postModel.createPost(req.body).then(async (result) => {
     //     await relationships.createRelationShip(result._id, req.body)
     //     res.json(result)

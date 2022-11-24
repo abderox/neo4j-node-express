@@ -1,31 +1,7 @@
 import {client} from '../db/hbase.js'
 import { nanoid } from 'nanoid';
-// import hbase from 'hbase'
-// // Instantiate a new client
-// const client = hbase({
-//     host: '127.0.0.1',
-//     port: 10005
-//   })
 
 
-// export const test = async (req, res) => {
-// export const test = async () => {
-//     // Create a table
-//     client
-//     .table('my_table2' )
-//     .create('my_column_family', function(err, success){
-//         // Insert a record
-//         client
-//         .table('my_table' )
-//         .row('my_row')
-//         // .put('my_column_family:my_column', 'my value', function(err, success){
-//             // if(err) throw err;
-//             console.log(err)
-//             console.log(success)
-//             // res.status(200).send(success)
-//         // })
-//     })
-// }
 
 const gen = async () => {
     // Instantiate a new client
@@ -56,16 +32,6 @@ const gen = async () => {
 // await test();
 
 export const initPost = async (req, res) => {
-    // client
-    // .table('posttest1' )
-    // .create('general_infos', function(err, success){
-    //     if(err) {
-    //         return res.status(500).send(err)
-    //     }
-    //     return res.status(200).send(success)
-    // })
-
-    
    await client.table('post_test')
   .create({
     name: 'info',
@@ -242,121 +208,6 @@ client
   )
 }
 
-export const addPost = async (req, res) => {
-    console.log("addPost-1")
-    const unique_id = nanoid(8)
-    const post = req.body;
-    const columns = Object.keys(post);
-    if(columns.length === 0) {
-        return res.status(400).send('No data provided')
-    }
-    if(!columns.includes('userId') || !columns.includes('publisher') || !columns.includes('createdAt') || !columns.includes('name')) {
-        return res.status(400).send('Missing required fields')
-    }
-    console.log("addPost-2")
-    const data = [];
-    columns.forEach(column => {
-        if(column == 'userId' || column == 'publisher' || column == 'createdAt' || column == 'name') {
-            data.push({
-                column: `general_info:${column}`,
-                $: post[column]
-            })
-        } else {
-            data.push({
-                column: `custom_info:${column}`,
-                $: post[column]
-            })
-        }
-    })
-
-    console.log("addPost-3")
-    
-    client.table('post_test')
-    .row(unique_id)
-    .put(data, function (err, success) {
-      if (err) return res.status(500).send(err)
-      console.log('success', success);
-      return res.status(200).send(success)
-    })
-}
-
-export const getPosts = async (req, res) => {
-    client
-    .table('post_test')
-    .scan({
-        startRow: '1',
-        maxVersions: 1,
-    }, (err, rows) =>
-        {
-            let set = new Set()
-            var data = []
-            rows.forEach(row => {
-                console.log('row', row)
-                if (!set.has(row.key)) {
-                    // let row_data = {}
-                    // set.add(row.key)
-                    // row_data["id"] = row.key
-                    // row_data[row.column.split(':')[0]] = []
-                    // let obj = {}
-                    // obj[row.column.split(':')[1]] = row.$
-                    // row_data[row.column.split(':')[0]].push(obj)
-                    // data.push(row_data)
-                    
-                    let row_data = {}
-                    set.add(row.key)
-                    row_data["id"] = row.key
-                    row_data[row.column.split(':')[1]] = row.$
-                    data.push(row_data)
-                } else {
-                    // let obj_ = {}
-                    // obj_[row.column.split(':')[1]] = row.$;
-                    data.forEach((item, index) => {
-                        if (item.id === row.key) {
-                            // let temp = data[index]
-                            // temp[row.column.split(':')[0]]=[]
-                            // temp[row.column.split(':')[0]].push(obj_)
-                            // data[index] = temp
-
-                            // let temp = {}
-                            // temp[row.column.split(':')[1]] = row.$
-                            data[index][row.column.split(':')[1]] = row.$
-                        }
-                    })        
-                }
-            })   
-            console.log('data', JSON.stringify(data));
-            return res.status(200).send(data)
-        }
-    )
-}
-
-
-
-// let set = new Set()
-// var data = []
-// rows.forEach(row => {
-//     if (!set.has(row.key)) {
-//         let row_data = {}
-//         set.add(row.key)
-//         row_data["id"] = row.key
-//         row_data[row.column.split(':')[0]] = []
-//         let obj = {}
-//         obj[row.column.split(':')[1]] = row.$
-//         row_data[row.column.split(':')[0]].push(obj)
-//         data.push(row_data)
-//         }
-//         else {
-//             let obj_ = {}
-//             obj_[row.column.split(':')[1]] = row.$;
-//             data.forEach((item, index) => {
-//                 if (item.id === row.key) {
-//                     let temp = data[index]
-//                     temp[row.column.split(':')[0]]=[]
-//                     temp[row.column.split(':')[0]].push(obj_)
-//                     data[index] = temp
-//                 }
-//             })
-//         }
 
 
 export const test = createPosth
