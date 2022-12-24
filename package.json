@@ -32,6 +32,11 @@
     "multer": "^1.4.5-lts.1",
     "nanoid": "^4.0.0",
     "neo4j-driver": "^4.3.0",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "apos-to-lex-form": "^1.0.0",
+    "bad-words": "^3.0.4",
+    "natural": "^0.6.3",
+    "spelling-corrector": "^3.0.0",
+    "stopword": "^0.3.3"
   }
 }

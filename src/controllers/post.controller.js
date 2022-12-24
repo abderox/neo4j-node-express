@@ -1,5 +1,6 @@
 import {client} from '../db/hbase.js'
 import { nanoid } from 'nanoid';
+import { filter_bad_words } from '../utils/sentiment.util.js';
 
 export const addPost = async (req, res) => {
     console.log("addPost-1")
@@ -77,17 +78,7 @@ export const getPosts = async (req, res) => {
 export const getPostById = async (req, res) => {
     const id = req.params.id;
     console.log("-----------------------" + id)
-    // client
-    // .table('post_test')
-    // .row(id)
-    // .get((err, row) => {
-    //     if (err) return res.status(500).send(err)
-    //     console.log('row', row)
-    //     let row_data = {}
-    //     // row_data["_id"] = row.key
-    //     // row_data[row.column.split(':')[1]] = row.$
-    //     return res.status(200).send({post : row_data, comments : []});
-    // })
+   
     client
     .table('post_test')
     .scan({
@@ -153,6 +144,7 @@ export const getPostById = async (req, res) => {
                 let comment_data = []
                 comment_data_.forEach((item, index) => {
                     if (item.postId === id) {
+                        item.content = filter_bad_words(item.content);
                         comment_data.push(item)
                     }
                 })

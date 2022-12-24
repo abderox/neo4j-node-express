@@ -1,11 +1,22 @@
 import {client} from '../db/hbase.js'
 import { nanoid } from 'nanoid';
+// import all from sentiment.controller
+import {
+    nlp_sentiment_analysis,
+    filter_bad_words
+}
+from '../utils/sentiment.util.js'
 
 export const addComment = async (req, res) => {
     console.log("addComment-1")
+
+   
     const unique_id = nanoid(8)
     const comment = req.body;
+     // analyse with nlp
+    comment.sentiment = nlp_sentiment_analysis(comment.content);
     const columns = Object.keys(comment);
+
     if(columns.length === 0) {
         return res.status(400).send('No data provided')
     }
