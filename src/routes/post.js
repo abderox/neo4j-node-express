@@ -62,20 +62,18 @@ post.post('/upload/:name', async (req, res) => {
 
 
 post.put('/views/:id', async (req, res) => {
-    // const result = await postModel.findByIdAndUpdatePostViews(req.params.id, req.body)
-    // res.json(result)
+    await postController.updatePostViews(req, res);
 })
 
 
 post.put('/likes/:id', async (req, res) => {
-    // const result = await postModel.findByIdAndUpdatePostLikes(req.params.id, req.body)
-    // res.json(result)
+    console.log("like")
+    await postController.updatePostLikes(req, res);
 })
 
 
 post.put('/dislikes/:id', async (req, res) => {
-    // const result = await postModel.findByIdAndUpdatePostDislikes(req.params.id, req.body)
-    // res.json(result)
+    await postController.updatePostDislikes(req, res);
 })
 
 

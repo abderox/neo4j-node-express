@@ -7,6 +7,7 @@ import fileUpload from 'express-fileupload';
 import cookieSession from "cookie-session";
 import connectDB from "./src/db/mongodb.js";
 import userLogin from './src/routes/userLogin.js'
+import init from './src/routes/init.js'
 
 var corsOptions = {
     origin: "*",
@@ -51,6 +52,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.use("/api/auth", userLogin);
+app.use("/api/init", init);
 app.use('/user', user)
 app.use('/post', post)
 app.use('/comment', comment)

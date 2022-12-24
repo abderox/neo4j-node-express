@@ -33,7 +33,10 @@ export const addPost = async (req, res) => {
     client.table('post_test')
     .row(unique_id)
     .put(data, function (err, success) {
-      if (err) return res.status(500).send(err)
+      if (err) {
+        console.log(err);
+        return res.status(500).send(err)
+      }
       console.log('success', success);
       return res.status(200).send(success)
     })
@@ -49,7 +52,7 @@ export const getPosts = async (req, res) => {
         {
             let set = new Set()
             var data = []
-            rows.forEach(row => {
+            rows && rows.forEach(row => {
                 console.log('row', row)
                 if (!set.has(row.key)) {
                     let row_data = {}
@@ -159,3 +162,64 @@ export const getPostById = async (req, res) => {
         }
     )
 }
+
+
+export const updatePostViews = async (req, res) => {
+    const views = req.body.views;
+    const id = req.params.id;
+
+    // const newViews = post?.views ? Number.parseInt(post.views) + 1 : 1;
+
+    client.table('post_test')
+        .row(id)
+        .put([
+        {
+            column: 'general_info:views',
+            $: views.toString()
+        },
+        ], function (err, success) {
+        if (err) console.log(err)
+        return console.log( success);
+        })
+}
+
+export const updatePostLikes = async (req, res) => {
+    const likes = req.body.likes;
+    const id = req.params.id;
+
+    console.log('likes', likes)
+    console.log('id', id)
+    // const newLikes = post?.likes ? Number.parseInt(post.likes) + 1 : 1;
+
+    client.table('post_test')
+        .row(id)
+        .put([
+        {
+            column: 'general_info:likes',
+            $: likes.toString()
+        },
+        ], function (err, success) {
+        if (err) console.log(err)
+        return console.log( success);
+        })
+}
+
+export const updatePostDislikes = async (req, res) => {
+    const dislikes = req.body.dislikes;
+    const id = req.params.id;
+
+    // const newDislikes = post?.dislikes ? Number.parseInt(post.dislikes) + 1 : 1;
+
+    client.table('post_test')
+        .row(id)
+        .put([
+        {
+            column: 'general_info:dislikes',
+            $: dislikes.toString()
+        },
+        ], function (err, success) {
+        if (err) console.log(err)
+        return console.log( success);
+        })
+}
+  
