@@ -38,12 +38,15 @@ const uploadfile = async (req, res) => {
         return res.status(400).send('No files were uploaded.');
     }
 
+    
+
 
     if (req.files.file > maxSize) {
         return res.status(400).send('File too large');
     }
 
-
+    console.log("metadata")
+    console.log(req.files.file)
     const filePath = path.join(process.cwd(), 'src', 'media', `${name}.${req.files.file.name.split('.').pop()}`)
 
 
