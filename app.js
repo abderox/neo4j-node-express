@@ -8,6 +8,7 @@ import cookieSession from "cookie-session";
 import connectDB from "./src/db/mongodb.js";
 import userLogin from './src/routes/userLogin.js'
 import init from './src/routes/init.js'
+import sentiment from './src/routes/sentiment.js';
 
 var corsOptions = {
     origin: "*",
@@ -56,6 +57,7 @@ app.use("/api/init", init);
 app.use('/user', user)
 app.use('/post', post)
 app.use('/comment', comment)
+app.use('/api/nlp',sentiment);
 
 
 app.listen(4343, () => {
