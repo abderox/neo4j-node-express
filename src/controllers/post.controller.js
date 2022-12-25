@@ -1,6 +1,7 @@
 import { client } from '../db/hbase.js'
 import { nanoid } from 'nanoid';
 import { filter_bad_words } from '../utils/sentiment.util.js';
+import { topic_modeling } from '../utils/filesManip.js';
 
 export const addPost = async (req, res) => {
     console.log("addPost-1")
@@ -160,7 +161,9 @@ export const getPostById = async (req, res) => {
 export const addTopicColumnsToPost = async (req, res) => {
 
     const id = req.params.id;
-    const topicsObj = req.body.topics;
+    const fileName = req.body.fileName;
+
+    const topicsObj = await topic_modeling(fileName,2,4);
 
     // example
     const topicsObjSouldBeLike = {
@@ -217,7 +220,12 @@ export const addTopicColumnsToPost = async (req, res) => {
 export const addTopicColumnsToPostWay2 = async (req, res) => {
 
     const id = req.params.id;
-    const topicsObj = req.body.topics;
+    const fileName = req.body.fileName;
+
+    console.log("filename", fileName)
+
+    const topicsObj = await topic_modeling(fileName,2,4);
+
 
     // example
     const topicsObjSouldBeLike = {
@@ -268,8 +276,32 @@ export const addTopicColumnsToPostWay2 = async (req, res) => {
                 console.log('success', success);
                 return res.status(200).send(success)
             })
-    
+        
 }
+
+
+// ! just for testing since the server cannot work
+// const resCallback =  
+//     (err, success) => {
+//         if (err) {
+//             console.log(err);
+//         }
+//         console.log('success', success);
+     
+//     }
+
+// await addTopicColumnsToPostWay2({
+//     params: {
+//         id: 'post_1'
+//     },
+//     body: {
+//         fileName: 'tp_3_CONTAINEURISATION_ABDELHADI_MOUZAFIR.pdf'
+//     }
+// },
+//     resCallback
+//     )
+
+
 
 
 

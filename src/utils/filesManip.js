@@ -36,7 +36,7 @@ export const image_to_text = (fileName) => {
 
 
 
-export const topic_modeling = (fileName, topics, words) => {
+export const topic_modeling = async(fileName, topics, words) => {
 
     var text;
 
@@ -97,7 +97,19 @@ export const topic_modeling = (fileName, topics, words) => {
 
         console.log('');
     }
-    return obj;
+
+    return new Promise((resolve, reject) => {
+        if(
+            obj
+        ){
+            resolve(obj)
+        }
+        else{
+            reject("error occured while retrieving topics")
+        }
+    })
+
+    // return obj;
 }
 
 
@@ -140,4 +152,4 @@ export const pdf_to_text = (fileName) => {
 }
 
 
-console.log(topic_modeling("Capture d’écran 2022-12-25 031941.png", 3, 5))
+console.log(await topic_modeling("Capture d’écran 2022-12-25 031941.png", 3, 5))
