@@ -40,16 +40,20 @@ export const topic_modeling = (fileName, topics, words) => {
 
     var text;
 
-    let where = fileName.split('.').pop() ==="pdf" || [
+    let pdf_ = fileName.split('.').pop() ==="pdf" ? 'media/pdf_to_text' : 'media' ;
+    let img_ =
+    [
         'jpg',
         'jpeg',
         'png',
         'bmp',
     ].includes(
         fileName.split('.').pop()
-    );
+    ) ? 'media/img_to_text' : pdf_ ;
 
-    const filePath = path.join(process.cwd(), 'src',`${where ? 'media/pdf_to_text' : 'media'}`,fileName);
+    const filePath = path.join(process.cwd(), 'src',`${
+         img_
+    }`,fileName.split('.').shift() + ".txt");
 
 
     const contents = fs.readFileSync(filePath, 'utf-8');
@@ -134,3 +138,5 @@ export const pdf_to_text = (fileName) => {
 
 }
 
+
+console.log(topic_modeling("Capture d’écran 2022-12-25 031941.png", 3, 5))

@@ -1,0 +1,95 @@
+
+
+1 | P a g e 
+
+COMPTE RENDU TP3 
+Conteneurisation 
+1
+ère
+ partie 
+ 
+Etudiant 
+Abdelhadi Mouzafir 
+Professeure 
+Mme Oumayma Banouar 
+
+Q1) Hello world to docker  
+Q2) list docker commands 
+
+2 | P a g e 
+
+Q3) docker help  
+
+3 | P a g e 
+
+Q4) hello-world dockerfile 
+Q5) docker ps , list current active processes 
+Q6) docker ps -a , list all of the containers 
+
+4 | P a g e 
+
+Q7) docker images 
+Q8) docker search centos 
+Q9) docker search -–filter stars=5 centos 
+It finds all the images that include the word “centos” from Docker Hub , and let us choose the  
+one that fits our needs . 
+
+5 | P a g e 
+
+s 
+
+Q9) docker pull centos 
+Q10) docker runs the image 
+Q11) docker removes the container 
+Q12) docker removes image 
+Q12) docker force stop images and delete : 
+ docker rmi -f $(docker images -a -q) 
+
+6 | P a g e 
+
+Q13) docker delete all images : docker rmi $(docker images -a -q) 
+Q14) docker build image  
+Q15) docker run image 
+
+7 | P a g e 
+
+Q16) docker login 
+Q17) docker tag image_id abderox/node-test:latest 
+Q18) docker push abderox/node-test:latest 
+
+8 | P a g e 
+
+Q19) fullstack application with docker 
+The directory named service holds the 
+Backoffice of the application whilst ui 
+folder contains the frontend , the other 
+folder renowned postgresql2 is the 
+volume I specified in docker compose 
+for my database. 
+My docker compose 
+
+9 | P a g e 
+
+Dockerfile of my application backend 
+Dockerfile of my application frontend 
+
+10 | P a g e 
+
+I use the following command to make sure the cache is clean to avoid confusions between ports 
+, and images. 
+All of the three containers  are  up to date and running  
+
+11 | P a g e 
+
+The frontend is running on port 8888 
+The backend is running on port 8085 
+
+12 | P a g e 
+
+Testing communication between the three containers : it worked !! 
+
+13 | P a g e 
+
+For more insurance, I tried to access my database by accessing to the bash of the running 
+postgresql container, and I displayed previously inserted rows . 
+END 
