@@ -1,0 +1,19 @@
+How to fix “__dirname
+is not defined in ES
+module scope”
+Published in 2022
+| Psssst! The 2023 WEB DEVELOPMENT BOOTCAMP i starting in just 38 days! |
+! Join the waiting list, reserve your spot in my 10-weeks cohort course and learn the |
+| fundamentals, HTML, CSS, JS, Tailwind, React, Nextjs and much more! ' i
+| stumbled on this error while | used __dirname inside a ES
+module. B
+In an ES module, you cannot use __dirname. awa
+Using__dirname in a Node script you can get the path of the pows, bt o he
+folder where the current JavaScript file resides, and many Openid Comec
+Nodejs projects use this. o
+But if you use it inside an ES module, you can't use this, as the
+infamous *_dimame is not defined in ES module scope” error shows up.
+What can you do in this case?
+I solved this problem by using a solution | found on the Nodejs GitHub issues.
+You first need to import the Node.js path module and the fileURLToPath function
+from the url module:
