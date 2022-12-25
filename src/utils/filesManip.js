@@ -40,7 +40,16 @@ export const topic_modeling = (fileName, topics, words) => {
 
     var text;
 
-    const filePath = path.join(process.cwd(), 'src','media','pdf_to_text',fileName);
+    let where = fileName.split('.').pop() ==="pdf" || [
+        'jpg',
+        'jpeg',
+        'png',
+        'bmp',
+    ].includes(
+        fileName.split('.').pop()
+    );
+
+    const filePath = path.join(process.cwd(), 'src',`${where ? 'media/pdf_to_text' : 'media'}`,fileName);
 
 
     const contents = fs.readFileSync(filePath, 'utf-8');
