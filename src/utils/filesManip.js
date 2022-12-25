@@ -141,4 +141,3 @@ export const pdf_to_text = (fileName) => {
 
 
 console.log(topic_modeling("Capture d’écran 2022-12-25 031941.png", 3, 5))
-

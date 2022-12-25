@@ -154,6 +154,9 @@ export const getPostById = async (req, res) => {
 }
 
 
+
+// TODO: the second method will insert array as array
+
 export const addTopicColumnsToPost = async (req, res) => {
 
     const id = req.params.id;
@@ -209,7 +212,64 @@ export const addTopicColumnsToPost = async (req, res) => {
     }
 }
 
+// TODO: the second method will insert array of topics as a String
 
+export const addTopicColumnsToPostWay2 = async (req, res) => {
+
+    const id = req.params.id;
+    const topicsObj = req.body.topics;
+
+    // example
+    const topicsObjSouldBeLike = {
+        Topic_1: [
+            'module (0.21%)',
+            'es (0.16%)',
+            'dirname (0.092%)',
+            'scope (0.062%)',
+            'error (0.062%)'
+        ],
+        Topic_2: [
+            'nodejs (0.052%)',
+            'path (0.033%)',
+            'web (0.021%)',
+            'starting (0.021%)',
+            'reserve (0.021%)'
+        ],
+        Topic_3: [
+            'nodejs (0.059%)',
+            'path (0.039%)',
+            'waiting (0.02%)',
+            'usingdirname (0.02%)',
+            'tailwind (0.02%)'
+        ]
+    }
+
+
+    var data = []
+
+    for (const [key, value] of Object.entries(topicsObj)) {
+        console.log(key, value);
+       
+            data.push({
+                column: `topics:${key}`,
+                $: value.toString()
+            })
+        
+    }
+
+        client.table('post_test')
+            .row(id)
+            .put(data, function (err, success) {
+                if (err) {
+                    console.log(err);
+                    return res.status(500
+                    ).send(err)
+                }
+                console.log('success', success);
+                return res.status(200).send(success)
+            })
+    
+}
 
 
 

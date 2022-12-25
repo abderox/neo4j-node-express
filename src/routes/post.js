@@ -95,10 +95,17 @@ post.get('/get-documents/:value', async (req, res) => {
 
 
 // TODO: this one needs to be tested , topics route
-post.post('/topics/addTopics/:id',
+
+post.post('/topicsV1/addTopics/:id',
     async (req, res) => {
-       await postController.addTopicColumnsToPost(req,res);
+        await postController.addTopicColumnsToPost(req, res);
     })
+
+post.post('/topicsV2/addTopics/:id',
+    async (req, res) => {
+        await postController.addTopicColumnsToPostWay2(req, res);
+    })
+
 
 export default post;
 
