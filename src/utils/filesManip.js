@@ -92,7 +92,8 @@ export const topic_modeling = (fileName, topics, words) => {
             array.push(term.term + ' (' + term.probability + '%)');
             // console.log(term.term + ' (' + term.probability + '%)');
         }
-        obj['Topic ' + (parseInt(i) + 1)] = array;
+        console.log(array)
+        obj['Topic_' + (parseInt(i) + 1)] = array;
 
         console.log('');
     }
@@ -140,3 +141,4 @@ export const pdf_to_text = (fileName) => {
 
 
 console.log(topic_modeling("Capture d’écran 2022-12-25 031941.png", 3, 5))
+

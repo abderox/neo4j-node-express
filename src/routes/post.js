@@ -93,5 +93,12 @@ post.get('/get-documents/:value', async (req, res) => {
     // res.json(result)
 })
 
+
+// TODO: this one needs to be tested , topics route
+post.post('/topics/addTopics/:id',
+    async (req, res) => {
+       await postController.addTopicColumnsToPost(req,res);
+    })
+
 export default post;
 

@@ -1,6 +1,6 @@
 import { Router } from "express";
-import * as sentimentController from '../controllers/sentiment.controller.js'
 const sentiment = Router()
+import * as sentimentController from '../controllers/sentiment.controller.js'
 
 
 sentiment.post('/getSentiment', (req, res) => {

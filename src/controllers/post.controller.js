@@ -1,4 +1,4 @@
-import {client} from '../db/hbase.js'
+import { client } from '../db/hbase.js'
 import { nanoid } from 'nanoid';
 import { filter_bad_words } from '../utils/sentiment.util.js';
 
@@ -7,16 +7,16 @@ export const addPost = async (req, res) => {
     const unique_id = nanoid(8)
     const post = req.body;
     const columns = Object.keys(post);
-    if(columns.length === 0) {
+    if (columns.length === 0) {
         return res.status(400).send('No data provided')
     }
-    if(!columns.includes('userId') || !columns.includes('publisher') || !columns.includes('createdAt') || !columns.includes('name')) {
+    if (!columns.includes('userId') || !columns.includes('publisher') || !columns.includes('createdAt') || !columns.includes('name')) {
         return res.status(400).send('Missing required fields')
     }
     console.log("addPost-2")
     const data = [];
     columns.forEach(column => {
-        if(column == 'userId' || column == 'publisher' || column == 'createdAt' || column == 'name') {
+        if (column == 'userId' || column == 'publisher' || column == 'createdAt' || column == 'name') {
             data.push({
                 column: `general_info:${column}`,
                 $: post[column]
@@ -30,27 +30,26 @@ export const addPost = async (req, res) => {
     })
 
     console.log("addPost-3")
-    
+
     client.table('post_test')
-    .row(unique_id)
-    .put(data, function (err, success) {
-      if (err) {
-        console.log(err);
-        return res.status(500).send(err)
-      }
-      console.log('success', success);
-      return res.status(200).send(success)
-    })
+        .row(unique_id)
+        .put(data, function (err, success) {
+            if (err) {
+                console.log(err);
+                return res.status(500).send(err)
+            }
+            console.log('success', success);
+            return res.status(200).send(success)
+        })
 }
 
 export const getPosts = async (req, res) => {
     client
-    .table('post_test')
-    .scan({
-        startRow: '1',
-        maxVersions: 1
-    }, (err, rows) =>
-        {
+        .table('post_test')
+        .scan({
+            startRow: '1',
+            maxVersions: 1
+        }, (err, rows) => {
             let set = new Set()
             var data = []
             rows && rows.forEach(row => {
@@ -66,34 +65,34 @@ export const getPosts = async (req, res) => {
                         if (item._id === row.key) {
                             data[index][row.column.split(':')[1]] = row.$
                         }
-                    })        
+                    })
                 }
-            })   
+            })
             console.log('data', JSON.stringify(data));
             return res.status(200).send(data)
         }
-    )
+        )
 }
 
 export const getPostById = async (req, res) => {
     const id = req.params.id;
     console.log("-----------------------" + id)
-   
+
     client
-    .table('post_test')
-    .scan({
-        startRow: id,
-        stopRow: id,
-        maxVersions: 1,
-        filter: {
-            "op":"MUST_PASS_ALL","type":"FilterList","filters":[{
-                "op":"EQUAL",
-                "type":"RowFilter",
-                "comparator":{"value":id,"type":"BinaryComparator"}
-              }
-            ]}
-    }, (err, rows) =>
-    {
+        .table('post_test')
+        .scan({
+            startRow: id,
+            stopRow: id,
+            maxVersions: 1,
+            filter: {
+                "op": "MUST_PASS_ALL", "type": "FilterList", "filters": [{
+                    "op": "EQUAL",
+                    "type": "RowFilter",
+                    "comparator": { "value": id, "type": "BinaryComparator" }
+                }
+                ]
+            }
+        }, (err, rows) => {
             console.log('rows', rows)
             let set = new Set()
             var post_data = []
@@ -110,50 +109,108 @@ export const getPostById = async (req, res) => {
                         if (item._id === row.key) {
                             post_data[index][row.column.split(':')[1]] = row.$
                         }
-                    })        
+                    })
                 }
             })
             console.log('post_data', JSON.stringify(post_data));
-            
+
             console.log(id)
             client
-            .table('comment_test')
-            .scan({}, (err, rows) =>
-            {
-                console.log('rows', rows)
-                let set = new Set()
-                var comment_data_ = []
-                if(rows && rows.length > 0) {
-                    rows.forEach(row => {
-                        console.log('row', row)
-                        if (!set.has(row.key)) {
-                            let row_comment_data_ = {}
-                            set.add(row.key)
-                            row_comment_data_["_id"] = row.key
-                            row_comment_data_[row.column.split(':')[1]] = row.$
-                            comment_data_.push(row_comment_data_)
-                        } else {
-                            comment_data_.forEach((item, index) => {
-                                if (item._id === row.key) {
-                                    comment_data_[index][row.column.split(':')[1]] = row.$
-                                }
-                            })
+                .table('comment_test')
+                .scan({}, (err, rows) => {
+                    console.log('rows', rows)
+                    let set = new Set()
+                    var comment_data_ = []
+                    if (rows && rows.length > 0) {
+                        rows.forEach(row => {
+                            console.log('row', row)
+                            if (!set.has(row.key)) {
+                                let row_comment_data_ = {}
+                                set.add(row.key)
+                                row_comment_data_["_id"] = row.key
+                                row_comment_data_[row.column.split(':')[1]] = row.$
+                                comment_data_.push(row_comment_data_)
+                            } else {
+                                comment_data_.forEach((item, index) => {
+                                    if (item._id === row.key) {
+                                        comment_data_[index][row.column.split(':')[1]] = row.$
+                                    }
+                                })
+                            }
+                        })
+                    }
+                    let comment_data = []
+                    comment_data_.forEach((item, index) => {
+                        if (item.postId === id) {
+                            item.content = filter_bad_words(item.content);
+                            comment_data.push(item)
                         }
                     })
-                }
-                let comment_data = []
-                comment_data_.forEach((item, index) => {
-                    if (item.postId === id) {
-                        item.content = filter_bad_words(item.content);
-                        comment_data.push(item)
-                    }
+                    console.log('comment_data', comment_data);
+                    return res.status(200).send({ post: post_data[0] ? post_data[0] : {}, comments: comment_data });
                 })
-                console.log('comment_data', comment_data);
-                return res.status(200).send({post : post_data[0] ? post_data[0] : {}, comments : comment_data});
-            })
         }
-    )
+        )
 }
+
+
+export const addTopicColumnsToPost = async (req, res) => {
+
+    const id = req.params.id;
+    const topicsObj = req.body.topics;
+
+    // example
+    const topicsObjSouldBeLike = {
+        Topic_1: [
+            'module (0.21%)',
+            'es (0.16%)',
+            'dirname (0.092%)',
+            'scope (0.062%)',
+            'error (0.062%)'
+        ],
+        Topic_2: [
+            'nodejs (0.052%)',
+            'path (0.033%)',
+            'web (0.021%)',
+            'starting (0.021%)',
+            'reserve (0.021%)'
+        ],
+        Topic_3: [
+            'nodejs (0.059%)',
+            'path (0.039%)',
+            'waiting (0.02%)',
+            'usingdirname (0.02%)',
+            'tailwind (0.02%)'
+        ]
+    }
+
+
+    for (const [key, value] of Object.entries(topicsObj)) {
+        console.log(key, value);
+        let data = []
+        value.forEach((item, index) => {
+            data.push({
+                column: `topics:${key}`,
+                $: item.toString()
+            })
+        })
+
+        client.table('post_test')
+            .row(id)
+            .put(data, function (err, success) {
+                if (err) {
+                    console.log(err);
+                    return res.status(500
+                    ).send(err)
+                }
+                console.log('success', success);
+                return res.status(200).send(success)
+            })
+    }
+}
+
+
+
 
 
 export const updatePostViews = async (req, res) => {
@@ -165,13 +222,13 @@ export const updatePostViews = async (req, res) => {
     client.table('post_test')
         .row(id)
         .put([
-        {
-            column: 'general_info:views',
-            $: views.toString()
-        },
+            {
+                column: 'general_info:views',
+                $: views.toString()
+            },
         ], function (err, success) {
-        if (err) console.log(err)
-        return console.log( success);
+            if (err) console.log(err)
+            return console.log(success);
         })
 }
 
@@ -186,13 +243,13 @@ export const updatePostLikes = async (req, res) => {
     client.table('post_test')
         .row(id)
         .put([
-        {
-            column: 'general_info:likes',
-            $: likes.toString()
-        },
+            {
+                column: 'general_info:likes',
+                $: likes.toString()
+            },
         ], function (err, success) {
-        if (err) console.log(err)
-        return console.log( success);
+            if (err) console.log(err)
+            return console.log(success);
         })
 }
 
@@ -205,13 +262,12 @@ export const updatePostDislikes = async (req, res) => {
     client.table('post_test')
         .row(id)
         .put([
-        {
-            column: 'general_info:dislikes',
-            $: dislikes.toString()
-        },
+            {
+                column: 'general_info:dislikes',
+                $: dislikes.toString()
+            },
         ], function (err, success) {
-        if (err) console.log(err)
-        return console.log( success);
+            if (err) console.log(err)
+            return console.log(success);
         })
 }
-  
